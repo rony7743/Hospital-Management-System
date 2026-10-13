@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeStorage } from '../utils/storage';
 import { authApi, AuthResponse, LoginPayload, RegisterPayload } from '../services/api';
 
 interface User {
@@ -35,19 +35,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadStoredAuth = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem(TOKEN_KEY);
-        const storedUser = await AsyncStorage.getItem(USER_KEY);
+        const storedToken = await safeStorage.getItem(TOKEN_KEY);
+        const storedUser = await safeStorage.getItem(USER_KEY);
 
         if (storedToken && storedUser) {
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch (e) {}
 
           // Optionally revalidate token in background
           try {
             const meRes = await authApi.getMe();
             if (meRes.user) {
               setUser(meRes.user as User);
-              await AsyncStorage.setItem(USER_KEY, JSON.stringify(meRes.user));
+              await safeStorage.setItem(USER_KEY, JSON.stringify(meRes.user));
             }
           } catch (e) {
             // Token might be expired
@@ -69,8 +71,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (response.token && response.user) {
       setToken(response.token);
       setUser(response.user as User);
-      await AsyncStorage.setItem(TOKEN_KEY, response.token);
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(response.user));
+      await safeStorage.setItem(TOKEN_KEY, response.token);
+      await safeStorage.setItem(USER_KEY, JSON.stringify(response.user));
     }
     return response;
   };
@@ -80,8 +82,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (response.token && response.user) {
       setToken(response.token);
       setUser(response.user as User);
-      await AsyncStorage.setItem(TOKEN_KEY, response.token);
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(response.user));
+      await safeStorage.setItem(TOKEN_KEY, response.token);
+      await safeStorage.setItem(USER_KEY, JSON.stringify(response.user));
     }
     return response;
   };
@@ -89,9 +91,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setUser(null);
     setToken(null);
-    await AsyncStorage.removeItem(TOKEN_KEY);
-    await AsyncStorage.removeItem(USER_KEY);
+    await safeStorage.removeItem(TOKEN_KEY);
+    await safeStorage.removeItem(USER_KEY);
   };
+
 
   return (
     <AuthContext.Provider

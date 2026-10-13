@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon index.js",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
@@ -25,5 +26,8 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

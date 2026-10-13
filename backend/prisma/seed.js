@@ -132,19 +132,20 @@ async function main() {
     },
   });
 
-  // 4. Receptionist Staff User
+  // 4. Receptionist Staff User (ADMIN role)
   const receptionistUser = await prisma.user.upsert({
     where: { email: 'reception@hospital.com' },
     update: {
       password: passwordHash,
-      role: Role.RECEPTIONIST,
+      role: Role.ADMIN,
     },
     create: {
       email: 'reception@hospital.com',
       password: passwordHash,
-      role: Role.RECEPTIONIST,
+      role: Role.ADMIN,
     },
   });
+
 
   await prisma.staff.upsert({
     where: { userId: receptionistUser.id },

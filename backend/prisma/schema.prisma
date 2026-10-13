@@ -15,15 +15,11 @@ datasource db {
 // ==========================================
 
 enum Role {
-  SUPER_ADMIN
   ADMIN
   DOCTOR
   PATIENT
-  RECEPTIONIST
-  NURSE
-  PHARMACIST
-  ACCOUNTANT
 }
+
 
 enum Gender {
   MALE

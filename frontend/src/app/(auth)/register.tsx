@@ -5,19 +5,21 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
+
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { register } = useAuth();
 
-  const [role, setRole] = useState<'patient' | 'doctor' | 'staff'>('patient');
+  const [role, setRole] = useState<'patient' | 'doctor' | 'admin'>('patient');
+
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -89,12 +91,13 @@ export default function RegisterScreen() {
         {/* Role Selector */}
         <Text style={styles.label}>Account Role</Text>
         <View style={styles.roleContainer}>
-          {(['patient', 'doctor', 'staff'] as const).map((item) => (
+          {(['patient', 'doctor', 'admin'] as const).map((item) => (
             <TouchableOpacity
               key={item}
               style={[styles.roleChip, role === item && styles.roleChipActive]}
               onPress={() => setRole(item)}
             >
+
               <Text
                 style={[styles.roleText, role === item && styles.roleTextActive]}
               >

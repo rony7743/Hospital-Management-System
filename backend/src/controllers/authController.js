@@ -58,14 +58,15 @@ const register = async (req, res) => {
 
     // 3. Resolve role enum
     let normalizedRole = 'PATIENT';
-    const roleUpper = role.toUpperCase();
+    const roleUpper = (role || '').toUpperCase();
     if (roleUpper === 'DOCTOR') {
       normalizedRole = 'DOCTOR';
-    } else if (roleUpper === 'STAFF' || roleUpper === 'RECEPTIONIST') {
-      normalizedRole = 'RECEPTIONIST';
-    } else if (roleUpper === 'ADMIN') {
+    } else if (roleUpper === 'ADMIN' || roleUpper === 'STAFF' || roleUpper === 'RECEPTIONIST') {
       normalizedRole = 'ADMIN';
+    } else {
+      normalizedRole = 'PATIENT';
     }
+
 
     // Check if phone is already used in Patient model if registering as patient
     if (normalizedRole === 'PATIENT') {

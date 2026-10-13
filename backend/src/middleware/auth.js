@@ -57,6 +57,38 @@ const authenticateToken = async (req, res, next) => {
 };
 
 /**
+ * Optional authentication middleware (sets req.user if token present, continues anyway)
+ */
+const optionalAuthenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        isActive: true,
+      },
+    });
+
+    if (user && user.isActive) {
+      req.user = user;
+    }
+  } catch (err) {
+    // ignore invalid token for optional auth
+  }
+  next();
+};
+
+/**
  * Role-based authorization middleware
  */
 const requireRole = (...roles) => {
@@ -73,7 +105,9 @@ const requireRole = (...roles) => {
 
 module.exports = {
   authenticateToken,
+  optionalAuthenticateToken,
   requireRole,
   JWT_SECRET,
 };
+
 

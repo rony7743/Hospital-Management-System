@@ -3,6 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const prisma = require('./src/prisma');
 const authRoutes = require('./src/routes/authRoutes');
+const doctorRoutes = require('./src/routes/doctorRoutes');
+const appointmentRoutes = require('./src/routes/appointmentRoutes');
+const labTestRoutes = require('./src/routes/labTestRoutes');
+const wardBedRoutes = require('./src/routes/wardBedRoutes');
+const medicineRoutes = require('./src/routes/medicineRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +18,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/lab-tests', labTestRoutes);
+app.use('/api/wards', wardBedRoutes);
+app.use('/api/medicines', medicineRoutes);
 
 // Health route
 app.get('/health', async (req, res) => {
@@ -38,11 +48,12 @@ app.get('/', (req, res) => {
     message: 'Welcome to Hospital Management System API',
     endpoints: {
       health: '/health',
-      auth: {
-        register: 'POST /api/auth/register',
-        login: 'POST /api/auth/login',
-        me: 'GET /api/auth/me',
-      },
+      auth: '/api/auth',
+      doctors: '/api/doctors',
+      appointments: '/api/appointments',
+      labTests: '/api/lab-tests',
+      wards: '/api/wards',
+      medicines: '/api/medicines',
     },
   });
 });
